@@ -70,7 +70,7 @@ public class SpatialVectorTable {
     // list of possible primary keys - for more that one: seperated with ';'
     private String s_primary_key_fields="";
     private String s_unique_name=""; // file-name+table-name+field-name
-
+    private String s_table_type="table"; // table/view
     public SpatialVectorTable( String  s_map_file,String s_table_name, String s_geometry_column, int geomType, String srid, double[] center , double[] bounds,
      String s_layer_type,int i_row_count,int i_coord_dimension,int i_spatial_index_enabled,String s_last_verified ) {
         this.s_map_file = s_map_file;
@@ -78,7 +78,7 @@ public class SpatialVectorTable {
         s_name_file=file_map.getName();
         this.s_table_name = s_table_name;
         this.s_geometry_column = s_geometry_column;
-        this.s_unique_name=this.s_map_file+File.separator+s_table_name+File.separator+s_geometry_column;
+        this.s_unique_name=this.s_map_file+File.separator+s_table_type+File.separator+s_table_name+File.separator+s_geometry_column;
         this.geomType = geomType;
         this.srid = srid;
         this.centerX = center[0];
@@ -160,6 +160,27 @@ public class SpatialVectorTable {
       */
     public String getMapType() {
         return this.s_map_type;
+    }
+    // -----------------------------------------------
+    /**
+      * Return type of Table Type 'table' or 'view'
+      * - default: 'table'
+      *
+      * @return s_table_type table or view
+      */
+    public String getTableType() {
+        return this.s_table_type;
+    }
+    // -----------------------------------------------
+    /**
+      * Set type of Table Type 'table' or 'view'
+      * - this.s_unique_name will set using this value
+      *
+      * @return nothing
+      */
+    public void  setTableType(String s_table_type) {
+        this.s_table_type=s_table_type;
+        this.s_unique_name=this.s_map_file+File.separator+s_table_type+File.separator+s_table_name+File.separator+s_geometry_column;
     }
     // -----------------------------------------------
     /**
@@ -397,7 +418,6 @@ public class SpatialVectorTable {
         maxZoom=style.maxZoom;
         minZoom=style.minZoom;
     }
-
     public boolean isPolygon() {
         return isPolygon;
     }

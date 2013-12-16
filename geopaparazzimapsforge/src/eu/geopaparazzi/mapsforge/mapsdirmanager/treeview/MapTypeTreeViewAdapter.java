@@ -15,9 +15,9 @@ import android.widget.TextView;
 
 final class MapTypeTreeViewAdapter extends FileDirectoryTreeViewAdapter
 {
- public MapTypeTreeViewAdapter(final MapsDirTreeViewList activity,final Set<Long> selected_nodes,final TreeStateManager<Long> treeStateManager,final int numberOfLevels)
+ public MapTypeTreeViewAdapter(final MapsDirTreeViewList treeViewList_MapDir,final Set<Long> selected_nodes,final TreeStateManager<Long> treeStateManager,final int numberOfLevels)
  {
-  super(activity, selected_nodes, treeStateManager, numberOfLevels);
+  super(treeViewList_MapDir, selected_nodes, treeStateManager, numberOfLevels);
  }
  @Override
  public LinearLayout updateView(final View view,final TreeNodeInfo<Long> node_info)

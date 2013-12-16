@@ -24,4 +24,9 @@
  <string name="mapsdir_treeview_delete_menu">Delete</string>
  <string name="mapsdir_treeview_delete_menu_condensed">Delete</string>
  <string name="mapsdir_treeview_item_fields_options_button">Options</string>
+ <string name="vector_treeview_vectordirectory_menu">File/Directory List</string>
+ <string name="vector_treeview_vectordirectory_menu_condensed">File/Directory</string>
+ <string name="vector_treeview_vectortype_menu">Vector Types List</string>
+ <string name="vector_treeview_vectortype_menu_condensed">Vector Types</string>
+ <string name="vector_treeview_item_fields_options_button">Options</string>
 </resources>

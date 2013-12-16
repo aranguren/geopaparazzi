@@ -91,6 +91,15 @@ public class TreeNodeInfo<T> {
     public int getType() {
         return this_classinfo.getType();
     }
+    public int getEnabled() {
+        return this_classinfo.getEnabled();
+    }
+    public void setEnabled(int i_enabled) {
+        this_classinfo.setEnabled(i_enabled);
+    }
+    public double[] getPositionValues() {
+        return this_classinfo.getPositionValues();
+    }
     @Override
     public String toString() {
         return "TreeNodeInfo [id=" + id + ", level=" + level

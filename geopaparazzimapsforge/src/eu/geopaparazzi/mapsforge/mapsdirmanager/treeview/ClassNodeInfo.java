@@ -47,14 +47,14 @@ public class ClassNodeInfo<T>
   *            type to be retrieved [as text : file.extention]
   * @param s_class_name
   *            short text to be shown
-  * @param s_file_path [as file-name with path [vector + table and field-name]]
+  * @param s_file_path [as file-name with path [vector + table-type + table-name and field-name]]
   *           unique text to be shown
   * @param s_short_text [as file-name without path]
   *            short text to be shown [vector: database-file without path]
   * @param s_long_text [as file-name with path]
   *            long text to be retrieved
   * @param s_short_description [as file-name without path]
-  *            short discription to be shown
+  *            short discription to be shown [vector-table=field-name]
   * @param s_long_description [as file-name with path]
   *            long discription to be retrieved [vector-table=table-name]
   *
@@ -188,10 +188,21 @@ public class ClassNodeInfo<T>
   }
   return i_rc;
  }
+  // -----------------------------------------------
+ /**
+   * Get Position Values
+   * - strict checking is done, since anything could be sent
+   * -- indended for use with SpatialVectorTable
+   * @return double[] position west,south,east,north,centerX,centerY,minzoom,maxzoom
+   */
+ public double[] getPositionValues()
+ {
+  return new double[]{bounds_west,bounds_south,bounds_east,bounds_north,centerX,centerY,(double)minZoom,(double)maxZoom};
+ }
  // -----------------------------------------------
  /**
    * Set Position Values
-   * - strick checking is done, since anything could be sent
+   * - strict checking is done, since anything could be sent
    * -- indended for use with SpatialVectorTable
    * @return nothing
    */
@@ -214,9 +225,9 @@ public class ClassNodeInfo<T>
           ((bounds[1] >= -85.05113) && (bounds[1] <= 85.05113)) && ((bounds[3] >= -85.05113) && (bounds[3] <= 85.05113)))
      {
       bounds_west=bounds[0]; // wsg84
+      bounds_south=bounds[1]; // wsg84
       bounds_east=bounds[2]; // wsg84
       bounds_north=bounds[3]; // wsg84
-      bounds_south=bounds[1]; // wsg84
       b_valid_bounds=true;
       centerX = (bounds[0] + (bounds[2] - bounds[0]) / 2);
       centerY = (bounds[1] + (bounds[3] - bounds[1]) / 2);

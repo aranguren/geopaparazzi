@@ -977,8 +977,7 @@ public class SpatialiteDatabaseHandler implements ISpatialDatabaseHandler {
     public GeometryIterator getGeometryIteratorInBounds( String destSrid, SpatialVectorTable table, double n, double s, double e,
             double w ) {
         String query = buildGeometriesInBoundsQuery(destSrid, table, n, s, e, w);
-        GPLog.androidLog(-1, "SpatialiteDatabaseHandler.getGeometryIteratorInBounds[" + table.getUniqueName() + "]: query["
-                + query + "]");
+        //GPLog.androidLog(-1, "SpatialiteDatabaseHandler.getGeometryIteratorInBounds[" + table.getUniqueName() + "]: query["+ query + "]");
         return new GeometryIterator(db_java, query);
     }
 
@@ -1795,6 +1794,8 @@ public class SpatialiteDatabaseHandler implements ISpatialDatabaseHandler {
                     fields_list = get_table_fields(table_name, 0); // compleate list of fields of
                                                                    // this table
                     table.setFieldsList(fields_list);
+                    // when views are supported:
+                    // table.setTableType("view");
                     vector_TableList.add(table);
                 }
             } catch (Exception e) {

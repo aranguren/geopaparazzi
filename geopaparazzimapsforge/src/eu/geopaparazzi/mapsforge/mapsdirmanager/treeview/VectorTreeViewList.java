@@ -37,7 +37,7 @@ import android.widget.SimpleCursorAdapter;
  * Demo activity showing how the tree view can be used.
  *
  */
-public class MapsDirTreeViewList extends Activity
+public class VectorTreeViewList extends Activity
 {
  /**
   * The name of the extra data in the result {@link Intent}.
@@ -54,14 +54,14 @@ public class MapsDirTreeViewList extends Activity
  private static List<ClassNodeInfo> filedirectory_classes=null;
  private static File maps_dir=null;
  private final Set<Long> selected_nodes = new HashSet<Long>();
- private static final String TAG = MapsDirTreeViewList.class.getSimpleName();
+ private static final String TAG = VectorTreeViewList.class.getSimpleName();
  private TreeViewList this_treeViewList;
  private static int MAPDIR_LEVEL_NUMBER = 0;
  private static int MAX_LEVEL_NUMBER = 0;
- private TreeStateManager<Long> tree_manager_filedirectory = null;
- private TreeStateManager<Long> tree_manager_maptype = null;
- private static MapTypeTreeViewAdapter treeview_maptype=null;
- private static FileDirectoryTreeViewAdapter treeview_filedirectory=null;
+ private TreeStateManager<Long> tree_manager_vectordirectory = null;
+ private TreeStateManager<Long> tree_manager_vectortype = null;
+ private static VectorTypeTreeViewAdapter treeview_vectortype=null;
+ private static VectorDirectoryTreeViewAdapter treeview_vectordirectory=null;
  private String s_file_name="";
  private String s_file_type="map";
  public static TreeType use_treeType=TreeType.FILEDIRECTORY;
@@ -81,8 +81,8 @@ public class MapsDirTreeViewList extends Activity
  private final int id_mapsdir_context_menu_properties=1;
  private final int id_mapsdir_context_menu_properties_edit=2;
  private final int id_mapsdir_context_menu_properties_delete=3;
- private final int id_mapsdir_treeview_filedirectory_menu=4;
- private final int id_mapsdir_treeview_maptype_menu=5;
+ private final int id_vector_treeview_vectordirectory_menu=4;
+ private final int id_vector_treeview_vectortype_menu=5;
  private final int id_mapsdir_treeview_collapsible_menu_disable=6;
  private final int id_mapsdir_treeview_expand_all_menu=7;
  private final int id_mapsdir_treeview_collapse_all_menu=8;
@@ -111,41 +111,41 @@ public class MapsDirTreeViewList extends Activity
  {
   maps_dir=maps_dir_parm;
   String s_map_file=maps_dir.getAbsolutePath();
-  int i_level_filedirectory = 0;
+  int i_level_vectordirectory = 0;
   mapsdir_classinfo=new ClassNodeInfo(0,100,"","directory",s_map_file,s_map_file,s_map_file,s_map_file,s_map_file,
   "","","");
-  mapsdir_classinfo.setLevel(i_level_filedirectory);
+  mapsdir_classinfo.setLevel(i_level_vectordirectory);
   // '/mnt/sdcard/maps' or '/mnt/extSdCard/maps' = level[0]
   MAPDIR_LEVEL_NUMBER = (s_map_file.length()-s_map_file.replaceAll(File.separator, "").length());
   ClassNodeInfo this_classinfo=null;
   filedirectory_classes=new LinkedList<ClassNodeInfo>();
-  // GPLog.androidLog(-1,TAG+" setMapTypeClasses["+maptype_classes_parm.size()+"] [" + MAPDIR_LEVEL_NUMBER+ "]");
+  GPLog.androidLog(-1,TAG+" setMapTypeClasses["+maptype_classes_parm.size()+"] [" + MAPDIR_LEVEL_NUMBER+ "]");
   for (int i=0;i<maptype_classes_parm.size();i++)
   {
    this_classinfo=maptype_classes_parm.get(i);
-   s_map_file=this_classinfo.getLongText();
+   s_map_file=this_classinfo.getFileNamePath();
    // '/mnt/sdcard/maps/opencycle.mapurl' = level[1] or '/mnt/extSdCard/maps/defaulttiles/_opencycle.mbtiles'  = level[2]
    // '+1' this file is also a level
-   i_level_filedirectory = (((s_map_file.length()-s_map_file.replaceAll(File.separator, "").length())-MAPDIR_LEVEL_NUMBER));
-   // GPLog.androidLog(-1,TAG+" setMapTypeClasses["+this_classinfo.getId()+"] [" + this_classinfo.getFileNamePath()+ "]");
-   // GPLog.androidLog(1,"MapsDirTreeViewList ["+i+"] i_level_filedirectory[" + i_level_filedirectory+ "] map_file[" + s_map_file+"]");
-   if (MAX_LEVEL_NUMBER < i_level_filedirectory)
-    MAX_LEVEL_NUMBER=i_level_filedirectory;
-   this_classinfo.setLevel(i_level_filedirectory);
+   i_level_vectordirectory = (((s_map_file.length()-s_map_file.replaceAll(File.separator, "").length())-MAPDIR_LEVEL_NUMBER));
+   GPLog.androidLog(-1,TAG+" setMapTypeClasses ["+i+"] i_level_vectordirectory[" + i_level_vectordirectory+ "] ["+this_classinfo.getId()+"] [" + this_classinfo.getFileNamePath()+ "]");
+   // GPLog.androidLog(1,"VectorTreeViewList ["+i+"] i_level_vectordirectory[" + i_level_vectordirectory+ "] map_file[" + s_map_file+"]");
+   if (MAX_LEVEL_NUMBER < i_level_vectordirectory)
+    MAX_LEVEL_NUMBER=i_level_vectordirectory;
+   this_classinfo.setLevel(i_level_vectordirectory);
    filedirectory_classes.add(this_classinfo);
   }
   MAX_LEVEL_NUMBER++; // add '/mnt/sdcard/maps' to the amount of levels
   maptype_classes=maptype_classes_parm;
   Collections.sort(maptype_classes,cp_meta_directory_file);
   Collections.sort(filedirectory_classes,cp_directory_file);
-  // GPLog.androidLog(2,"MapsDirTreeViewList setMapTypeClasses MAPDIR_LEVEL_NUMBER[" + MAPDIR_LEVEL_NUMBER+ "] MAX_LEVEL_NUMBER[" + MAX_LEVEL_NUMBER+"]");
+  // GPLog.androidLog(2,"VectorTreeViewList setMapTypeClasses MAPDIR_LEVEL_NUMBER[" + MAPDIR_LEVEL_NUMBER+ "] MAX_LEVEL_NUMBER[" + MAX_LEVEL_NUMBER+"]");
   return filedirectory_classes;
  }
  @SuppressWarnings("unchecked")
  // Goal :
  // - retain basic this_treeViewList ContentView reactions (Collap)
  // - http://code.google.com/p/tree-view-list-android/
- // -- R.layout.mapsdir_treeview
+ // -- R.layout.vector_treeview
  // - add selection ContentView reactions as found in 'ringdroid' project
  // -- R.layout.mapsdir_treeview_item_fields
  // --- when a simple file is clicked/selected_nodes
@@ -170,22 +170,22 @@ public class MapsDirTreeViewList extends Activity
   boolean new_Collapsible;
   if (savedInstanceState == null)
   {
-   tree_manager_filedirectory = new InMemoryTreeStateManager<Long>();
-   tree_manager_maptype = new InMemoryTreeStateManager<Long>();
-   final TreeBuilder<Long> tree_builder_filedirectory = new TreeBuilder<Long>(tree_manager_filedirectory);
-   final TreeBuilder<Long> tree_builder_maptype = new TreeBuilder<Long>(tree_manager_maptype);
+   tree_manager_vectordirectory = new InMemoryTreeStateManager<Long>();
+   tree_manager_vectortype = new InMemoryTreeStateManager<Long>();
+   final TreeBuilder<Long> tree_builder_vectordirectory = new TreeBuilder<Long>(tree_manager_vectordirectory);
+   final TreeBuilder<Long> tree_builder_vectortype = new TreeBuilder<Long>(tree_manager_vectortype);
    ClassNodeInfo this_classinfo=null;
-   int i_level_filedirectory=0;
-   int i_level_maptype=0;
-   int i_parent_dir_filedirectory=0;
-   int i_parent_dir_maptype=0;
-   long l_position_filedirectory=0;
-   long l_position_maptype=0;
+   int i_level_vectordirectory=0;
+   int i_level_vectortype=0;
+   int i_parent_dir_vectordirectory=0;
+   int i_parent_dir_vectortype=0;
+   long l_position_vectordirectory=0;
+   long l_position_vectortype=0;
    // new_TreeType = TreeType.FILEDIRECTORY;
    new_TreeType = use_treeType;
-   String s_directory_prev_filedirectory="";
-   String s_directory_prev_maptype="";
-   String s_maptype_prev="";
+   String s_directory_prev_vectordirectory="";
+   String s_directory_prev_vectortype="";
+   String s_vectortype_prev="";
    String s_directory_new="";
    try
    {
@@ -203,43 +203,43 @@ public class MapsDirTreeViewList extends Activity
        // Begin: 'TYPE_TEXT,DIRECTORY,FILE'
        //---------------------------------------------
        this_classinfo=maptype_classes.get(i_class);
-       String s_maptype_new=this_classinfo.getTypeText()+" ["+mapsdir_classinfo.getFileNamePath()+"]";
+       String s_vectortype_new=this_classinfo.getTypeText()+" ["+mapsdir_classinfo.getFileNamePath()+"]";
        String[] sa_string_prev;
        String s_directory_prev="";
-       if (!s_maptype_new.equals(s_maptype_prev))
+       if (!s_vectortype_new.equals(s_vectortype_prev))
        {
-        i_level_maptype=0;
-        ClassNodeInfo dir_classinfo=new ClassNodeInfo((l_position_maptype+10000),100,"","directory",mapsdir_classinfo.getFileNamePath(),s_maptype_new,"","","","","","");
-        dir_classinfo.setLevel(i_level_maptype);
-        s_maptype_prev=s_maptype_new; // "mbtiles [/mnt/extSdCard/maps]";
-        l_position_maptype=(long)(i_class+i_parent_dir_maptype);
-        tree_builder_maptype.sequentiallyAddNextNode(l_position_maptype,i_level_maptype,dir_classinfo);
-        i_parent_dir_maptype++;
+        i_level_vectortype=0;
+        ClassNodeInfo dir_classinfo=new ClassNodeInfo((l_position_vectortype+10000),100,"","directory",mapsdir_classinfo.getFileNamePath(),s_vectortype_new,"","","","","","");
+        dir_classinfo.setLevel(i_level_vectortype);
+        s_vectortype_prev=s_vectortype_new; // "mbtiles [/mnt/extSdCard/maps]";
+        l_position_vectortype=(long)(i_class+i_parent_dir_vectortype);
+        tree_builder_vectortype.sequentiallyAddNextNode(l_position_vectortype,i_level_vectortype,dir_classinfo);
+        i_parent_dir_vectortype++;
        }
        // GPLog.androidLog(-1,TAG+" onCreate[" + this_classinfo.toString()+ "]");
-       // String s_directory_new=ClassNodeInfo.getSubDirectory(this_classinfo,i_level_filedirectory,mapsdir_classinfo.getFileNamePath(),s_directory_prev_filedirectory);
+       // String s_directory_new=ClassNodeInfo.getSubDirectory(this_classinfo,i_level_vectordirectory,mapsdir_classinfo.getFileNamePath(),s_directory_prev_vectordirectory);
        s_directory_new="";
        if (this_classinfo.getLevel() > 1)
        { // level[1] is a file in the root-map-directory
         s_directory_new=this_classinfo.getFilePath().getParent().replaceAll(mapsdir_classinfo.getFileNamePath()+File.separator,"")+File.separator;
        }
-       if (((this_classinfo.getLevel()) != i_level_maptype) || (!s_directory_new.equals(s_directory_prev_maptype)))
+       if (((this_classinfo.getLevel()) != i_level_vectortype) || (!s_directory_new.equals(s_directory_prev_vectortype)))
        {
-        // GPLog.androidLog(-1,TAG+" onCreate[MAPTYPE] level["+this_classinfo.getLevel()+"] prev[" + s_directory_prev_maptype+ "] new[" + s_directory_new+ "] ");
+        // GPLog.androidLog(-1,TAG+" onCreate[MAPTYPE] level["+this_classinfo.getLevel()+"] prev[" + s_directory_prev_vectortype+ "] new[" + s_directory_new+ "] ");
         String s_directory_path="";
         if (!s_directory_new.equals(""))
         {
-         boolean b_directory_prev= s_directory_new.startsWith(s_directory_prev_maptype);
-         i_level_maptype=mapsdir_classinfo.getLevel();
-         // int i_level_maptypes = (s_directory_new.length()-s_directory_new.replaceAll(File.separator, "").length());
+         boolean b_directory_prev= s_directory_new.startsWith(s_directory_prev_vectortype);
+         i_level_vectortype=mapsdir_classinfo.getLevel();
+         // int i_level_vectortypes = (s_directory_new.length()-s_directory_new.replaceAll(File.separator, "").length());
          String[] sa_string=s_directory_new.split(File.separator);
-         sa_string_prev=s_directory_prev_maptype.split(File.separator);
+         sa_string_prev=s_directory_prev_vectortype.split(File.separator);
          s_directory_path=mapsdir_classinfo.getFileNamePath()+File.separator;
          for (int j=0;j<sa_string.length;j++)
          { // if diff == 1: '1861_World_Mercator/' ; diff==2: 'mbtiles/1861_World_Mercator'
           String s_directory=sa_string[j]+File.separator;
           s_directory_prev="";
-          i_level_maptype++;
+          i_level_vectortype++;
           if (b_directory_prev)
           {
            if (j<sa_string_prev.length)
@@ -251,58 +251,58 @@ public class MapsDirTreeViewList extends Activity
           {
            // First parm must have an absolute path, -
            // - second parm 's_directory' : only this will be shown 'getShortText()'
-           ClassNodeInfo dir_classinfo=new ClassNodeInfo((l_position_maptype+10000),100,"","directory",s_directory_path+s_directory,s_directory,"","","","","","");
-           dir_classinfo.setLevel(i_level_maptype);
+           ClassNodeInfo dir_classinfo=new ClassNodeInfo((l_position_vectortype+10000),100,"","directory",s_directory_path+s_directory,s_directory,"","","","","","");
+           dir_classinfo.setLevel(i_level_vectortype);
            // todo search if exists, add only if it does not
-           l_position_maptype=(long)(i_class+i_parent_dir_maptype);
-           tree_builder_maptype.sequentiallyAddNextNode(l_position_maptype,i_level_maptype,dir_classinfo);
-           i_parent_dir_maptype++;
+           l_position_vectortype=(long)(i_class+i_parent_dir_vectortype);
+           tree_builder_vectortype.sequentiallyAddNextNode(l_position_vectortype,i_level_vectortype,dir_classinfo);
+           i_parent_dir_vectortype++;
           }
           s_directory_path+=s_directory;
          }
         }
-        i_level_maptype=this_classinfo.getLevel();
-        // GPLog.androidLog(-1,TAG+" onCreate prev[" + s_directory_prev_maptype+ "] new[" + s_directory_new+ "] level["+i_level_maptype+"] directory_path[" + s_directory_path+ "]");
-        s_directory_prev_maptype = s_directory_new;
+        i_level_vectortype=this_classinfo.getLevel();
+        // GPLog.androidLog(-1,TAG+" onCreate prev[" + s_directory_prev_vectortype+ "] new[" + s_directory_new+ "] level["+i_level_vectortype+"] directory_path[" + s_directory_path+ "]");
+        s_directory_prev_vectortype = s_directory_new;
        }
-       l_position_maptype=(long)(i_class+i_parent_dir_maptype);
+       l_position_vectortype=(long)(i_class+i_parent_dir_vectortype);
        // GPLog.androidLog(-1,TAG+" onCreate["+this_classinfo.getId()+"] TYPE_TEXT,DIRECTORY,FILE[" + this_classinfo.getFileNamePath()+ "]");
-       tree_builder_maptype.sequentiallyAddNextNode(l_position_maptype,i_level_maptype,this_classinfo);
+       tree_builder_vectortype.sequentiallyAddNextNode(l_position_vectortype,i_level_vectortype,this_classinfo);
        //---------------------------------------------
        // End:  'TYPE_TEXT,DIRECTORY,FILE'
        //---------------------------------------------
        // Begin: 'DIRECTORY,FILE'
        //---------------------------------------------
        this_classinfo=filedirectory_classes.get(i_class);
-       if (i_level_filedirectory == 0)
+       if (i_level_vectordirectory == 0)
        {
-        s_directory_prev_filedirectory=mapsdir_classinfo.getFileNamePath(); // "/mnt/extSdCard/maps";
-        tree_builder_filedirectory.sequentiallyAddNextNode((long) i_parent_dir_filedirectory++,mapsdir_classinfo.getLevel(),mapsdir_classinfo);
-        i_level_filedirectory=mapsdir_classinfo.getLevel();
+        s_directory_prev_vectordirectory=mapsdir_classinfo.getFileNamePath(); // "/mnt/extSdCard/maps";
+        tree_builder_vectordirectory.sequentiallyAddNextNode((long) i_parent_dir_vectordirectory++,mapsdir_classinfo.getLevel(),mapsdir_classinfo);
+        i_level_vectordirectory=mapsdir_classinfo.getLevel();
        }
        // GPLog.androidLog(-1,TAG+" onCreate[" + this_classinfo.toString()+ "]");
-       // String s_directory_new=ClassNodeInfo.getSubDirectory(this_classinfo,i_level_filedirectory,mapsdir_classinfo.getFileNamePath(),s_directory_prev_filedirectory);
+       // String s_directory_new=ClassNodeInfo.getSubDirectory(this_classinfo,i_level_vectordirectory,mapsdir_classinfo.getFileNamePath(),s_directory_prev_vectordirectory);
        s_directory_new="";
        if (this_classinfo.getLevel() > 1)
        { // level[1] is a file in the root-map-directory
         s_directory_new=this_classinfo.getFilePath().getParent().replaceAll(mapsdir_classinfo.getFileNamePath()+File.separator,"")+File.separator;
        }
-       if (((this_classinfo.getLevel()) != i_level_filedirectory) || (!s_directory_new.equals(s_directory_prev_filedirectory)))
+       if (((this_classinfo.getLevel()) != i_level_vectordirectory) || (!s_directory_new.equals(s_directory_prev_vectordirectory)))
        {
-        // GPLog.androidLog(-1,TAG+" onCreate[FILEDIRECTORY] level["+this_classinfo.getLevel()+"] prev[" + s_directory_prev_filedirectory+ "] new[" + s_directory_new+ "] ");
+        // GPLog.androidLog(-1,TAG+" onCreate[FILEDIRECTORY] level["+this_classinfo.getLevel()+"] prev[" + s_directory_prev_vectordirectory+ "] new[" + s_directory_new+ "] ");
         String s_directory_path="";
         if (!s_directory_new.equals(""))
         {
-         boolean b_directory_prev= s_directory_new.startsWith(s_directory_prev_filedirectory);
-         i_level_filedirectory=mapsdir_classinfo.getLevel();
-         // int i_level_filedirectorys = (s_directory_new.length()-s_directory_new.replaceAll(File.separator, "").length());
+         boolean b_directory_prev= s_directory_new.startsWith(s_directory_prev_vectordirectory);
+         i_level_vectordirectory=mapsdir_classinfo.getLevel();
+         // int i_level_vectordirectorys = (s_directory_new.length()-s_directory_new.replaceAll(File.separator, "").length());
          String[] sa_string=s_directory_new.split(File.separator);
-         sa_string_prev=s_directory_prev_filedirectory.split(File.separator);
+         sa_string_prev=s_directory_prev_vectordirectory.split(File.separator);
          s_directory_path=mapsdir_classinfo.getFileNamePath()+File.separator;
          for (int j=0;j<sa_string.length;j++)
          { // if diff == 1: '1861_World_Mercator/' ; diff==2: 'mbtiles/1861_World_Mercator'
           String s_directory=sa_string[j]+File.separator;
-          i_level_filedirectory++;
+          i_level_vectordirectory++;
           s_directory_prev="";
           if (b_directory_prev)
           {
@@ -315,22 +315,22 @@ public class MapsDirTreeViewList extends Activity
           {
            // First parm must have an absolute path, -
            // - second parm 's_directory' : only this will be shown 'getShortText()'
-           ClassNodeInfo dir_classinfo=new ClassNodeInfo((l_position_filedirectory+10000),100,"","directory",s_directory_path+s_directory,s_directory,"","","","","","");
-           dir_classinfo.setLevel(i_level_filedirectory);
+           ClassNodeInfo dir_classinfo=new ClassNodeInfo((l_position_vectordirectory+10000),100,"","directory",s_directory_path+s_directory,s_directory,"","","","","","");
+           dir_classinfo.setLevel(i_level_vectordirectory);
            // todo search if exists, add only if it does not
-           l_position_filedirectory=(long)(i_class+i_parent_dir_filedirectory);
-           tree_builder_filedirectory.sequentiallyAddNextNode(l_position_filedirectory,i_level_filedirectory,dir_classinfo);
-           i_parent_dir_filedirectory++;
+           l_position_vectordirectory=(long)(i_class+i_parent_dir_vectordirectory);
+           tree_builder_vectordirectory.sequentiallyAddNextNode(l_position_vectordirectory,i_level_vectordirectory,dir_classinfo);
+           i_parent_dir_vectordirectory++;
           }
           s_directory_path+=s_directory;
          }
         }
-        i_level_filedirectory=this_classinfo.getLevel();
-        // GPLog.androidLog(-1,TAG+" onCreate prev[" + s_directory_prev_filedirectory+ "] new[" + s_directory_new+ "] level["+i_level_filedirectory+"] directory_path[" + s_directory_path+ "]");
-        s_directory_prev_filedirectory = s_directory_new;
+        i_level_vectordirectory=this_classinfo.getLevel();
+        // GPLog.androidLog(-1,TAG+" onCreate prev[" + s_directory_prev_vectordirectory+ "] new[" + s_directory_new+ "] level["+i_level_vectordirectory+"] directory_path[" + s_directory_path+ "]");
+        s_directory_prev_vectordirectory = s_directory_new;
        }
-       l_position_filedirectory=(long)(i_class+i_parent_dir_filedirectory);
-       tree_builder_filedirectory.sequentiallyAddNextNode(l_position_filedirectory,i_level_filedirectory,this_classinfo);
+       l_position_vectordirectory=(long)(i_class+i_parent_dir_vectordirectory);
+       tree_builder_vectordirectory.sequentiallyAddNextNode(l_position_vectordirectory,i_level_vectordirectory,this_classinfo);
        //---------------------------------------------
        // End:  'DIRECTORY,FILE'
        //---------------------------------------------
@@ -343,33 +343,33 @@ public class MapsDirTreeViewList extends Activity
    {
     GPLog.androidLog(4,TAG+"onCreate creating [filling tree-nodes]",e);
    }
-   // GPLog.androidLog(-1,TAG+" onCreate[" + tree_manager_filedirectory.toString()+ "]");
+   // GPLog.androidLog(-1,TAG+" onCreate[" + tree_manager_vectordirectory.toString()+ "]");
    // GPLog.androidLog(-1,TAG+" onCreate[filling ended]");
    new_Collapsible = true;
   }
   else
   {
-   tree_manager_maptype = (TreeStateManager<Long>) savedInstanceState.getSerializable("mapdirtree_manager_maptype");
-   if (tree_manager_maptype == null)
+   tree_manager_vectortype = (TreeStateManager<Long>) savedInstanceState.getSerializable("vectortree_manager_vectortype");
+   if (tree_manager_vectortype == null)
    {
-    tree_manager_maptype = new InMemoryTreeStateManager<Long>();
+    tree_manager_vectortype = new InMemoryTreeStateManager<Long>();
    }
-   tree_manager_filedirectory = (TreeStateManager<Long>) savedInstanceState.getSerializable("mapdirtree_manager_filedirectory");
-   if (tree_manager_filedirectory == null)
+   tree_manager_vectordirectory = (TreeStateManager<Long>) savedInstanceState.getSerializable("vectortree_manager_vectordirectory");
+   if (tree_manager_vectordirectory == null)
    {
-    tree_manager_filedirectory = new InMemoryTreeStateManager<Long>();
+    tree_manager_vectordirectory = new InMemoryTreeStateManager<Long>();
    }
-   new_TreeType = (TreeType) savedInstanceState.getSerializable("use_mapdirtreeType");
+   new_TreeType = (TreeType) savedInstanceState.getSerializable("use_vectortreeType");
    if (new_TreeType == null)
    {
     new_TreeType = TreeType.FILEDIRECTORY;
    }
-   new_Collapsible = savedInstanceState.getBoolean("mapdir_collapsible");
+   new_Collapsible = savedInstanceState.getBoolean("vector_collapsible");
   }
   try
   {
-   setContentView(R.layout.mapsdir_treeview);
-   this_treeViewList = (TreeViewList) findViewById(R.id.mapsdir_treeview);
+   setContentView(R.layout.vector_treeview);
+   this_treeViewList = (TreeViewList) findViewById(R.id.vector_treeview);
    setTreeAdapter(new_TreeType);
    setCollapsible(new_Collapsible);
    registerForContextMenu(this_treeViewList);
@@ -396,11 +396,11 @@ public class MapsDirTreeViewList extends Activity
     switch (use_treeType)
     {
      case MAPTYPE:
-      node_info = tree_manager_maptype.getNodeInfo(id_node);
+      node_info = tree_manager_vectortype.getNodeInfo(id_node);
      break;
      case FILEDIRECTORY:
      default:
-      node_info = tree_manager_filedirectory.getNodeInfo(id_node);
+      node_info = tree_manager_vectordirectory.getNodeInfo(id_node);
      break;
     }
     // GPLog.androidLog(-1,TAG+" onItemClick["+use_treeType+"] [" + node_info.getLongText()+ "] id_node["+id_node+"]");
@@ -418,10 +418,10 @@ public class MapsDirTreeViewList extends Activity
  @Override
  protected void onSaveInstanceState(final Bundle outState)
  {
-  outState.putSerializable("mapdirtree_manager_maptype", tree_manager_maptype);
-  outState.putSerializable("mapdirtree_manager_filedirectory", tree_manager_filedirectory);
-  outState.putSerializable("use_mapdirtreeType", use_treeType);
-  outState.putBoolean("mapdir_collapsible", this.collapsible);
+  outState.putSerializable("vectortree_manager_vectortype", tree_manager_vectortype);
+  outState.putSerializable("vectortree_manager_vectordirectory", tree_manager_vectordirectory);
+  outState.putSerializable("use_vectortreeType", use_treeType);
+  outState.putBoolean("vector_collapsible", this.collapsible);
   super.onSaveInstanceState(outState);
  }
  protected final void setTreeAdapter(final TreeType new_TreeType)
@@ -431,21 +431,21 @@ public class MapsDirTreeViewList extends Activity
   {
    case MAPTYPE:
    {
-    if (treeview_maptype == null)
+    if (treeview_vectortype == null)
     {
-     treeview_maptype = new MapTypeTreeViewAdapter(this,selected_nodes,tree_manager_maptype,MAX_LEVEL_NUMBER);
+     treeview_vectortype = new VectorTypeTreeViewAdapter(this,selected_nodes,tree_manager_vectortype,MAX_LEVEL_NUMBER);
     }
-    this_treeViewList.setAdapter(treeview_maptype);
+    this_treeViewList.setAdapter(treeview_vectortype);
    }
    break;
    case FILEDIRECTORY:
    default:
    {
-    if (treeview_filedirectory == null)
+    if (treeview_vectordirectory == null)
     {
-     treeview_filedirectory = new FileDirectoryTreeViewAdapter(this,selected_nodes,tree_manager_filedirectory,MAX_LEVEL_NUMBER);
+     treeview_vectordirectory = new VectorDirectoryTreeViewAdapter(this,selected_nodes,tree_manager_vectordirectory,MAX_LEVEL_NUMBER);
     }
-    this_treeViewList.setAdapter(treeview_filedirectory);
+    this_treeViewList.setAdapter(treeview_vectordirectory);
    }
    break;
   }
@@ -457,11 +457,11 @@ public class MapsDirTreeViewList extends Activity
     switch (use_treeType)
     {
      case MAPTYPE:
-      node_info = tree_manager_maptype.getNodeInfo(id_node);
+      node_info = tree_manager_vectortype.getNodeInfo(id_node);
      break;
      case FILEDIRECTORY:
      default:
-      node_info = tree_manager_filedirectory.getNodeInfo(id_node);
+      node_info = tree_manager_vectordirectory.getNodeInfo(id_node);
      break;
     }
     // GPLog.androidLog(-1,TAG+" onItemClick["+use_treeType+"] [" + node_info.getLongText()+ "] id_node["+id_node+"]");
@@ -480,8 +480,8 @@ public class MapsDirTreeViewList extends Activity
  @Override
  public boolean onCreateOptionsMenu(final Menu menu)
  {
-  menu.add(0,id_mapsdir_treeview_filedirectory_menu,0,R.string.mapsdir_treeview_filedirectory_menu);
-  menu.add(0,id_mapsdir_treeview_maptype_menu,0,R.string.mapsdir_treeview_maptype_menu);
+  menu.add(0,id_vector_treeview_vectordirectory_menu,0,R.string.vector_treeview_vectordirectory_menu);
+  menu.add(0,id_vector_treeview_vectortype_menu,0,R.string.vector_treeview_vectortype_menu);
   menu.add(0,id_mapsdir_treeview_expand_all_menu,0,R.string.mapsdir_treeview_expand_all_menu);
   menu.add(0,id_mapsdir_treeview_collapse_all_menu,0,R.string.mapsdir_treeview_collapse_all_menu);
   menu.add(0,id_mapsdir_treeview_collapsible_menu_disable,0,R.string.mapsdir_treeview_collapsible_menu_disable);
@@ -506,20 +506,20 @@ public class MapsDirTreeViewList extends Activity
   {
    case MAPTYPE:
     // Show only the option to activate the other modus [hide the active modus]
-    menu.findItem(id_mapsdir_treeview_filedirectory_menu).setVisible(true);
-    menu.findItem(id_mapsdir_treeview_maptype_menu).setVisible(false);
-    mapsdirMenu = menu.findItem(id_mapsdir_treeview_filedirectory_menu);
-    mapsdirMenu.setTitle(R.string.mapsdir_treeview_filedirectory_menu);
-    mapsdirMenu.setTitleCondensed(getResources().getString(R.string.mapsdir_treeview_filedirectory_menu_condensed));
+    menu.findItem(id_vector_treeview_vectordirectory_menu).setVisible(true);
+    menu.findItem(id_vector_treeview_vectortype_menu).setVisible(false);
+    mapsdirMenu = menu.findItem(id_vector_treeview_vectordirectory_menu);
+    mapsdirMenu.setTitle(R.string.vector_treeview_vectordirectory_menu);
+    mapsdirMenu.setTitleCondensed(getResources().getString(R.string.vector_treeview_vectordirectory_menu_condensed));
    break;
    case FILEDIRECTORY:
    default:
     // Show only the option to activate the other modus [hide the active modus]
-    menu.findItem(id_mapsdir_treeview_maptype_menu).setVisible(true);
-    menu.findItem(id_mapsdir_treeview_filedirectory_menu).setVisible(false);
-    mapsdirMenu = menu.findItem(id_mapsdir_treeview_maptype_menu);
-    mapsdirMenu.setTitle(R.string.mapsdir_treeview_maptype_menu);
-    mapsdirMenu.setTitleCondensed(getResources().getString(R.string.mapsdir_treeview_maptype_menu_condensed));
+    menu.findItem(id_vector_treeview_vectortype_menu).setVisible(true);
+    menu.findItem(id_vector_treeview_vectordirectory_menu).setVisible(false);
+    mapsdirMenu = menu.findItem(id_vector_treeview_vectortype_menu);
+    mapsdirMenu.setTitle(R.string.vector_treeview_vectortype_menu);
+    mapsdirMenu.setTitleCondensed(getResources().getString(R.string.vector_treeview_vectortype_menu_condensed));
    break;
   }
   return super.onPrepareOptionsMenu(menu);
@@ -529,10 +529,10 @@ public class MapsDirTreeViewList extends Activity
  {
   switch (item.getItemId())
   {
-   case id_mapsdir_treeview_filedirectory_menu:
+   case id_vector_treeview_vectordirectory_menu:
     setTreeAdapter(TreeType.FILEDIRECTORY);
    break;
-   case id_mapsdir_treeview_maptype_menu:
+   case id_vector_treeview_vectortype_menu:
     setTreeAdapter(TreeType.MAPTYPE);
    break;
    case id_mapsdir_treeview_collapsible_menu_disable:
@@ -543,12 +543,12 @@ public class MapsDirTreeViewList extends Activity
     {
      case MAPTYPE:
      {
-      tree_manager_maptype.expandEverythingBelow(null);
+      tree_manager_vectortype.expandEverythingBelow(null);
      }
      break;
      case FILEDIRECTORY:
      {
-      tree_manager_filedirectory.expandEverythingBelow(null);
+      tree_manager_vectordirectory.expandEverythingBelow(null);
      }
      break;
     }
@@ -558,12 +558,12 @@ public class MapsDirTreeViewList extends Activity
     {
      case MAPTYPE:
      {
-      tree_manager_maptype.collapseChildren(null);
+      tree_manager_vectortype.collapseChildren(null);
      }
      break;
      case FILEDIRECTORY:
      {
-      tree_manager_filedirectory.collapseChildren(null);
+      tree_manager_vectordirectory.collapseChildren(null);
      }
      break;
     }
@@ -583,12 +583,12 @@ public class MapsDirTreeViewList extends Activity
   {
    case MAPTYPE:
    {
-    node_info = tree_manager_maptype.getNodeInfo(id_node);
+    node_info = tree_manager_vectortype.getNodeInfo(id_node);
    }
    break;
    case FILEDIRECTORY:
    {
-    node_info = tree_manager_filedirectory.getNodeInfo(id_node);
+    node_info = tree_manager_vectordirectory.getNodeInfo(id_node);
    }
    break;
   }
@@ -623,20 +623,20 @@ public class MapsDirTreeViewList extends Activity
     // menu.setHeaderTitle(Html.fromHtml(s_Title_Text));
     String s_Title_Text="["+node_info.getTypeText()+"] "+node_info.getShortText();
     menu.setHeaderTitle(s_Title_Text);
-    if (MapsDirTreeViewList.b_properties_file)
+    if (VectorTreeViewList.b_properties_file)
     {
      menu.add(0,id_mapsdir_context_menu_properties,0,R.string.mapsdir_treeview_properties_menu);
     }
-    if (MapsDirTreeViewList.b_edit_file)
+    if (VectorTreeViewList.b_edit_file)
     {
      menu.add(0,id_mapsdir_context_menu_properties_edit,0,R.string.mapsdir_treeview_properties_edit_menu);
     }
-    if (MapsDirTreeViewList.b_delete_file)
+    if (VectorTreeViewList.b_delete_file)
     {
      menu.add(0,id_mapsdir_context_menu_properties_delete,0,R.string.mapsdir_treeview_delete_menu);
     }
     menu.add(0,id_mapsdir_context_menu_load,0,R.string.mapsdir_treeview_load_menu);
-    // GPLog.androidLog(-1,TAG+" onCreateContextMenu ["+this_view.getId()+"] mapsdir_treeview_item_fields_*[" + node_info.getLongText()+ "] properties["+MapsDirTreeViewList.b_properties_file+"] edit["+MapsDirTreeViewList.b_edit_file+"] delete["+MapsDirTreeViewList.b_delete_file+"]");
+    // GPLog.androidLog(-1,TAG+" onCreateContextMenu ["+this_view.getId()+"] mapsdir_treeview_item_fields_*[" + node_info.getLongText()+ "] properties["+VectorTreeViewList.b_properties_file+"] edit["+VectorTreeViewList.b_edit_file+"] delete["+VectorTreeViewList.b_delete_file+"]");
    break;
   }
   super.onCreateContextMenu(menu, this_view, menuInfo);
@@ -651,12 +651,12 @@ public class MapsDirTreeViewList extends Activity
   {
    case MAPTYPE:
    {
-    node_info = tree_manager_maptype.getNodeInfo(id_node);
+    node_info = tree_manager_vectortype.getNodeInfo(id_node);
    }
    break;
    case FILEDIRECTORY:
    {
-    node_info = tree_manager_filedirectory.getNodeInfo(id_node);
+    node_info = tree_manager_vectordirectory.getNodeInfo(id_node);
    }
    break;
   }
@@ -668,12 +668,12 @@ public class MapsDirTreeViewList extends Activity
     {
      case MAPTYPE:
      {
-      tree_manager_maptype.collapseChildren(id_node);
+      tree_manager_vectortype.collapseChildren(id_node);
      }
      break;
      case FILEDIRECTORY:
      {
-      tree_manager_filedirectory.collapseChildren(id_node);
+      tree_manager_vectordirectory.collapseChildren(id_node);
      }
      break;
     }
@@ -684,12 +684,12 @@ public class MapsDirTreeViewList extends Activity
     {
      case MAPTYPE:
      {
-      tree_manager_maptype.expandEverythingBelow(id_node);
+      tree_manager_vectortype.expandEverythingBelow(id_node);
      }
      break;
      case FILEDIRECTORY:
      {
-      tree_manager_filedirectory.expandEverythingBelow(id_node);
+      tree_manager_vectordirectory.expandEverythingBelow(id_node);
      }
      break;
     }
@@ -700,12 +700,12 @@ public class MapsDirTreeViewList extends Activity
     {
      case MAPTYPE:
      {
-      tree_manager_maptype.expandDirectChildren(id_node);
+      tree_manager_vectortype.expandDirectChildren(id_node);
      }
      break;
      case FILEDIRECTORY:
      {
-      tree_manager_filedirectory.expandDirectChildren(id_node);
+      tree_manager_vectordirectory.expandDirectChildren(id_node);
      }
      break;
     }
@@ -720,12 +720,12 @@ public class MapsDirTreeViewList extends Activity
     {
      case MAPTYPE:
      {
-      // tree_manager_maptype.removeNodeRecursively(id_node);
+      // tree_manager_vectortype.removeNodeRecursively(id_node);
      }
      break;
      case FILEDIRECTORY:
      {
-      // tree_manager_filedirectory.removeNodeRecursively(id_node);
+      // tree_manager_vectordirectory.removeNodeRecursively(id_node);
      }
      break;
     }
@@ -736,12 +736,12 @@ public class MapsDirTreeViewList extends Activity
     {
      case MAPTYPE:
      {
-      // tree_manager_maptype.removeNodeRecursively(id_node);
+      // tree_manager_vectortype.removeNodeRecursively(id_node);
      }
      break;
      case FILEDIRECTORY:
      {
-      // tree_manager_filedirectory.removeNodeRecursively(id_node);
+      // tree_manager_vectordirectory.removeNodeRecursively(id_node);
      }
      break;
     }
@@ -752,12 +752,12 @@ public class MapsDirTreeViewList extends Activity
     {
      case MAPTYPE:
      {
-      tree_manager_maptype.removeNodeRecursively(id_node);
+      tree_manager_vectortype.removeNodeRecursively(id_node);
      }
      break;
      case FILEDIRECTORY:
      {
-      tree_manager_filedirectory.removeNodeRecursively(id_node);
+      tree_manager_vectordirectory.removeNodeRecursively(id_node);
      }
      break;
     }
@@ -775,12 +775,12 @@ public class MapsDirTreeViewList extends Activity
   {
    case MAPTYPE:
    {
-    node_info = tree_manager_maptype.getNodeInfo(id_node);
+    node_info = tree_manager_vectortype.getNodeInfo(id_node);
    }
    break;
    case FILEDIRECTORY:
    {
-    node_info = tree_manager_filedirectory.getNodeInfo(id_node);
+    node_info = tree_manager_vectordirectory.getNodeInfo(id_node);
    }
    break;
   }

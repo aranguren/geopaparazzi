@@ -46,9 +46,9 @@ class FileDirectoryTreeViewAdapter extends AbstractTreeViewAdapter<Long>
   }
  }
 
- public FileDirectoryTreeViewAdapter(final MapsDirTreeViewList treeViewListDemo,final Set<Long> selected_nodes,final TreeStateManager<Long> treeStateManager,final int numberOfLevels)
+ public FileDirectoryTreeViewAdapter(final MapsDirTreeViewList treeViewList_MapDir,final Set<Long> selected_nodes,final TreeStateManager<Long> treeStateManager,final int numberOfLevels)
  {
-  super(treeViewListDemo, treeStateManager, numberOfLevels);
+  super(treeViewList_MapDir, treeStateManager, numberOfLevels);
   this.selected_nodes = selected_nodes;
  }
 
@@ -73,6 +73,8 @@ class FileDirectoryTreeViewAdapter extends AbstractTreeViewAdapter<Long>
   final TextView typeView = (TextView) viewLayout.findViewById(R.id.mapsdir_treeview_item_fields_type);
   // descriptionView.setText(getDescription(treeNodeInfo.getId()));
   // typeView.setText(Integer.toString(treeNodeInfo.getLevel()));
+  // R.id.vector_treeview_item_properties
+  // R.id.vector_treeview_item_zoomto
   descriptionView.setText(node_info.getShortText());
   if (node_info.isWithChildren())
   {

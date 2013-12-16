@@ -55,6 +55,7 @@ import eu.geopaparazzi.mapsforge.mapsdirmanager.maps.tiles.MapGeneratorInternal;
 import eu.geopaparazzi.mapsforge.mapsdirmanager.maps.tiles.MapTable;
 import eu.geopaparazzi.mapsforge.mapsdirmanager.treeview.ClassNodeInfo;
 import eu.geopaparazzi.mapsforge.mapsdirmanager.treeview.MapsDirTreeViewList;
+import eu.geopaparazzi.mapsforge.mapsdirmanager.treeview.VectorTreeViewList;
 import eu.geopaparazzi.spatialite.database.spatial.SpatialDatabasesManager;
 import eu.geopaparazzi.spatialite.database.spatial.core.SpatialRasterTable;
 import eu.geopaparazzi.spatialite.database.spatial.core.SpatialVectorTable;
@@ -80,6 +81,7 @@ public class MapsDirManager {
     private String s_selected_type = "";
     private String s_selected_map = "";
     private ClassNodeInfo selected_mapinfo = null;
+    private ClassNodeInfo selected_vectorinfo = null;
     private MapGenerator selected_mapGenerator;
     private double bounds_west = 180.0;
     private double bounds_south = -85.05113;
@@ -292,7 +294,7 @@ public class MapsDirManager {
             GPLog.androidLog(4, "MapsDirManager handleTileSources MapTable[" + maps_dir.getAbsolutePath() + "]", e);
         }
         /*
-         * collect vector tables
+         * collect vector tables used by VectorTreeViewList
          */
          load_vector_classes();
         /*
@@ -343,6 +345,7 @@ public class MapsDirManager {
         GPLog.androidLog(-1, "MapsDirManager handleTileSources maptype_classes.count[" + maptype_classes.size() + "] selected_map[" + s_selected_map + "]");
         // List will be returned sorted as Directory-File with levels set.
         maptype_classes = MapsDirTreeViewList.setMapTypeClasses(maptype_classes, get_maps_dir());
+        vector_classes = VectorTreeViewList.setMapTypeClasses(vector_classes, get_maps_dir());
     }
     // -----------------------------------------------
     /**
@@ -386,6 +389,25 @@ public class MapsDirManager {
         }
         // GPLog.androidLog(-1,"MapsDirManager -I-> selected_MapClassInf mapinfo["
         // +selected_mapinfo.getShortDescription()+ "] i_rc["+i_rc+"]");
+        return i_rc;
+    }
+    // -----------------------------------------------
+    /**
+      * Application has selected a Vector
+      * - for one time tasks such as zoom to area
+      * <p>call from Application or Map-Activity
+      *
+      * @param map_View Map-View to set (if not null)
+      * @param mapCenterLocation [point/zoom to check]
+      * @return i_rc 0 ir correct ; else false not fullfilled
+      */
+    public int selected_VectorClassInfo(ClassNodeInfo selected_classinfo) {
+        int i_rc = -1;
+        if (selected_classinfo != null)
+        {
+         selected_vectorinfo = selected_classinfo;
+         i_rc = 0;
+        }
         return i_rc;
     }
     // -----------------------------------------------
